@@ -13,29 +13,39 @@ const HEART_RATE_SERVICE = numberToUUID(0x180d);
 export class HomePage {
 
 
+
   constructor() {
+
     this.scan();
+    console.log("potato");
 
   }
 
-  scan(){
-    try {
-       BleClient.initialize();
-console.log("entra");
 
-       BleClient.requestLEScan(
+
+ async scan(): Promise<void> {
+    try {
+      await BleClient.initialize();
+
+      await BleClient.requestLEScan(
         {
-          name: 'Kontakt',
+          services: [HEART_RATE_SERVICE],
         },
         result => {
           console.log('received new scan result', result);
         },
       );
 
+      setTimeout(async () => {
+        await BleClient.stopLEScan();
+        console.log('stopped scanning');
+      }, 5000);
     } catch (error) {
       console.error(error);
     }
   }
+
+
 
 }
 
