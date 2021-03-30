@@ -15,39 +15,26 @@ export class HomePage {
 
 
   constructor() {
-
-    this.scan();
-    console.log("potato");
-
+    scan();
   }
-
-
-
- async scan(): Promise<void> {
-    try {
-      await BleClient.initialize();
-
-      await BleClient.requestLEScan(
-        {
-          services: [HEART_RATE_SERVICE],
-        },
-        result => {
-          console.log('received new scan result', result);
-        },
-      );
-
-      setTimeout(async () => {
-        await BleClient.stopLEScan();
-        console.log('stopped scanning');
-      }, 5000);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
-
 }
 
+export async function scan(): Promise<void> {
+  try {
+    await BleClient.initialize();
 
+    await BleClient.requestLEScan(
+      {},
+      result => {
+        console.log('received new scan result', result);
+      },
+    );
 
+    setTimeout(async () => {
+      await BleClient.stopLEScan();
+      console.log('stopped scanning');
+    }, 5000);
+  } catch (error) {
+    console.error(error);
+  }
+}
