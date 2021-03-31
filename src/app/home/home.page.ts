@@ -1,40 +1,34 @@
 import { Component } from '@angular/core';
-import { BleClient, numberToUUID } from '@capacitor-community/bluetooth-le';
-
-const HEART_RATE_SERVICE = numberToUUID(0x180d);
+import { BleClient } from '@capacitor-community/bluetooth-le';
+import { BeaconService } from '../services/beacon.service';
 
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-
-
 export class HomePage {
+  kontaktDevices: any[] = [];
+
+  constructor(private BeaconService: BeaconService) {
+
+    this.getDatos();
+  }
+
+  scanDevices() {
+    this.BeaconService.scanDevices();
 
 
+  }
 
-  constructor() {
-    scan();
+  getDatos = () => {
+  setTimeout(() => {
+    this.kontaktDevices=this.BeaconService.getDevices();
+    console.log("aaaaaaa");
+
+  },5000);
   }
 }
 
-export async function scan(): Promise<void> {
-  try {
-    await BleClient.initialize();
 
-    await BleClient.requestLEScan(
-      {},
-      result => {
-        console.log('received new scan result', result);
-      },
-    );
 
-    setTimeout(async () => {
-      await BleClient.stopLEScan();
-      console.log('stopped scanning');
-    }, 5000);
-  } catch (error) {
-    console.error(error);
-  }
-}
