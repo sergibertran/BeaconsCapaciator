@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BleClient } from '@capacitor-community/bluetooth-le';
+import { interval } from 'rxjs';
 import { BeaconService } from '../services/beacon.service';
 
 @Component({
@@ -12,7 +13,11 @@ export class HomePage {
 
   constructor(private BeaconService: BeaconService) {
 
-    this.getDatos();
+    interval(1000).subscribe((x) => {
+      this.getDatos();
+    });
+
+
   }
 
   scanDevices() {
@@ -24,10 +29,23 @@ export class HomePage {
   getDatos = () => {
   setTimeout(() => {
     this.kontaktDevices=this.BeaconService.getDevices();
-    console.log("aaaaaaa");
+    console.log(this.kontaktDevices);
 
-  },5000);
+
+  },8000);
   }
+
+  viewItem(item) {
+
+  console.log(item);
+  console.log(item[1].rssi);
+  console.log(item[0].rssi);
+
+  }
+
+
+
+
 }
 
 

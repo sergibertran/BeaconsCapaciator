@@ -1,32 +1,35 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      BLE
-      <ion-button color="primary" (click)="scanDevices()">Scan</ion-button>
-      SCAN
-    </ion-title>
+  <ion-toolbar color="danger">
+    <ion-buttons slot="end">
+      <ion-button  (click)="scanDevices()">
+        <ion-icon
+          slot="icon-only"
 
+          ios="bluetooth-outline"
+          md="bluetooth-outline"
+        ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>BLE</ion-title>
   </ion-toolbar>
-
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">BL</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-list   *ngFor="let device of kontaktDevices">
-<ion-item>
-  <ion-avatar slot="start" [ngStyle]="{'background': device.device.deviceId == 'F5:0F:CA:33:DF:A0'? 'blue' : device.rssi > -65 && device.rssi < 0  ? 'green' : device.rssi > -72 && device.rssi < 65? 'yellow' : device.rssi > -86 && device.rssi < 72? 'orange' : 'red'}">
-  </ion-avatar>
-  <ion-label>
-    <h2>{{device.localName}}</h2>
-    <h3>{{device.device.deviceId}}</h3>
-    <p>{{device.rssi}}</p>
-  </ion-label>
-</ion-item>
-</ion-list>
-
+  Total Devices: {{kontaktDevices.length}}
+  <ion-list *ngFor="let device of kontaktDevices">
+    <ion-item (click)="viewItem(device)">
+      <ion-avatar
+        slot="start"
+        [ngStyle]="{'background': device[0] == 'F5:0F:CA:33:DF:A0'? 'blue' : device[1].rssi > -50 && device[1].rssi < 0  ? '#3eb938' : device[1].rssi > -60 && device[1].rssi < 50? '#ffff01' : device[1].rssi > -70 && device[1].rssi < 60? '#fdd702' : device[1].rssi > -80 && device[1].rssi < 70  ? '#f1a236' : device[1].rssi > -90 && device[1].rssi < 80  ? '#f77e51' : '#f15837'}"
+      >
+      </ion-avatar>
+      <ion-label>
+        <h2>Name: {{device[1].localName}}</h2>
+        <h3>id: {{device[0]}}</h3>
+        <p>Meters: {{device[1].meters}}</p>
+        <p>Rssi: {{device[1].rssi}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>
