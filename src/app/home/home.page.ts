@@ -10,6 +10,7 @@ import { BeaconService } from '../services/beacon.service';
 })
 export class HomePage {
   kontaktDevices: any[] = [];
+  newDevices: any[] = [];
 
   constructor(private BeaconService: BeaconService) {
 
@@ -24,7 +25,12 @@ export class HomePage {
       this.getDatos();
     });
 
+    interval(1000).subscribe((x) => {
+      this.newDevices=this.BeaconService.getNewDic()
+      console.log(this.newDevices);
 
+
+  });
   }
 
   scanDevices() {
@@ -36,7 +42,7 @@ export class HomePage {
   getDatos = () => {
   setTimeout(() => {
     this.kontaktDevices=this.BeaconService.getDevices();
-    console.log(this.kontaktDevices);
+
 
 
   },8000);
