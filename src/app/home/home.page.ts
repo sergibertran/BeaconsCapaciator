@@ -13,6 +13,13 @@ export class HomePage {
 
   constructor(private BeaconService: BeaconService) {
 
+
+    interval(4000).subscribe((x) => {
+      console.log('scan');
+
+      this.scanDevices();
+    });
+
     interval(1000).subscribe((x) => {
       this.getDatos();
     });
@@ -37,9 +44,13 @@ export class HomePage {
 
   viewItem(item) {
 
-  console.log(item);
-  console.log(item[1].rssi);
-  console.log(item[0].rssi);
+console.log(item);
+
+
+    alert(
+
+    item[1]['localName']+item[1]['manufacturerData']['76']['buffer']);
+
 
   }
 

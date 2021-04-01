@@ -9,6 +9,7 @@ export class BeaconService {
   array;
   meters: number;
   devicesDictionary = new Map<String, Object>();
+  devices10Dictionary = new Map<String, []>();
   resultado;
   last_seen;
   scanDevices() {
@@ -45,7 +46,7 @@ export class BeaconService {
         this.resultado.meters=this.meters;
         this.last_seen = Date.now();
         this.resultado.last_seen= this.last_seen;
-
+        this.resultado.arrayRssi= this.last_seen;
 
         if (this.devicesDictionary.has(this.resultado.device.deviceId) == true) {
           this.devicesDictionary.delete(this.resultado.device.deviceId);
@@ -79,7 +80,7 @@ export class BeaconService {
         }
         console.log('stopped scanning');
 
-      }, 5000);
+      }, 3000);
     } catch (error) {
       console.error(error);
     }
