@@ -13,6 +13,7 @@ export class BeaconService {
   devices10Dictionary = new Map<String, any[]>();
   resultado;
   last_seen;
+  milis;
   scanDevices() {
     this.scan();
   }
@@ -85,7 +86,7 @@ export class BeaconService {
           );
           this.newkontaktDevices = Array.from(this.devices10Dictionary);
         }
-        this.state();
+        this.setDistance();
 
         this.devicesDictionary.set(
           this.resultado.device.deviceId,
@@ -96,11 +97,16 @@ export class BeaconService {
       });
 
       setTimeout(async () => {
+
         await BleClient.stopLEScan();
 
-        for (let value of this.devicesDictionary.values()) {
+const values = this.devicesDictionary.values();
+        for (let value of values) {
+          this.milis=Date.now() - value['last_seen'];
+          console.log("fecha"+this.milis / 1000);
+
           if ((Date.now() - value['last_seen']) / 1000 > 30) {
-            console.log(this.devicesDictionary.has(value['id']));
+            console.log(this.devicesDictionary.has(value['id']+"hace mas de "+((Date.now() - value['last_seen']) / 1000 > 30)));
           }
         }
         console.log('stopped scanning');
@@ -110,19 +116,17 @@ export class BeaconService {
     }
   }
 
-  state(){
+  setDistance() {
     if (this.rssis.length > 1) {
       console.log(this.rssis.length);
       console.log(this.rssis);
 
       console.log(
-        this.rssis[this.rssis.length - 1] +
-          this.rssis[this.rssis.length - 2]
+        this.rssis[this.rssis.length - 1] + this.rssis[this.rssis.length - 2]
       );
 
       if (
-        this.rssis[this.rssis.length - 1] >
-        this.rssis[this.rssis.length - 2]
+        this.rssis[this.rssis.length - 1] > this.rssis[this.rssis.length - 2]
       ) {
         this.resultado.estado = 'getting closer';
         if (
@@ -133,8 +137,7 @@ export class BeaconService {
           this.resultado.estado = 'static';
         }
       } else if (
-        this.rssis[this.rssis.length - 1] <
-        this.rssis[this.rssis.length - 2]
+        this.rssis[this.rssis.length - 1] < this.rssis[this.rssis.length - 2]
       ) {
         this.resultado.estado = 'walking away';
 
@@ -149,10 +152,5 @@ export class BeaconService {
         this.resultado.estado = 'static';
       }
     }
-
   }
-
-
-
-
 }

@@ -13,8 +13,6 @@ export class HomePage {
   newDevices: any[] = [];
 
   constructor(private BeaconService: BeaconService) {
-
-
     interval(4000).subscribe((x) => {
       console.log('scan');
 
@@ -26,44 +24,24 @@ export class HomePage {
     });
 
     interval(1000).subscribe((x) => {
-      this.newDevices=this.BeaconService.getNewDic()
+      this.newDevices = this.BeaconService.getNewDic();
       console.log(this.newDevices);
-
-
-  });
+    });
   }
 
   scanDevices() {
     this.BeaconService.scanDevices();
-
-
   }
 
   getDatos = () => {
-  setTimeout(() => {
-    this.kontaktDevices=this.BeaconService.getDevices();
-
-
-
-  },8000);
-  }
+    setTimeout(() => {
+      this.kontaktDevices = this.BeaconService.getDevices();
+    }, 8000);
+  };
 
   viewItem(item) {
+    console.log(item);
 
-console.log(item);
-
-
-    alert(
-
-    item[1]['localName']+item[1]['manufacturerData']['76']['buffer']);
-
-
+    alert(item[1]['localName'] + item[1]['meters']);
   }
-
-
-
-
 }
-
-
-
