@@ -1,13 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="danger">
     <ion-buttons slot="end">
-      <ion-button (click)="scanDevices()">
-        <ion-icon
-          slot="icon-only"
-          ios="bluetooth-outline"
-          md="bluetooth-outline"
-        ></ion-icon>
-      </ion-button>
+      <ion-icon
+        slot="icon-only"
+        ios="bluetooth-outline"
+        md="bluetooth-outline"
+      ></ion-icon>
     </ion-buttons>
 
     <ion-title>BLE</ion-title>
@@ -15,12 +13,13 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  Total Devices: {{kontaktDevices.length}}
-  <ion-list *ngFor="let device of kontaktDevices">
+  Total Devices: {{Devices.length}}
+
+  <ion-list *ngFor="let device of Devices">
     <ion-item (click)="viewItem(device)">
       <ion-avatar
         slot="start"
-        [ngStyle]="{'background':device[1].rssi > -50 && device[1].rssi < 0  ? '#3eb938' : device[1].rssi > -60 && device[1].rssi < 50? '#ffff01' : device[1].rssi > -70 && device[1].rssi < 60? '#fdd702' : device[1].rssi > -80 && device[1].rssi < 70  ? '#f1a236' : device[1].rssi > -90 && device[1].rssi < 80  ? '#f77e51' : '#f15837'}"
+        [ngStyle]="{'background': device[0] == 'F5:0F:CA:33:DF:A0'? 'blue' :device[1].rssi > -50 && device[1].rssi < 0  ? '#3eb938' : device[1].rssi > -60 && device[1].rssi < 50? '#ffff01' : device[1].rssi > -70 && device[1].rssi < 60? '#fdd702' : device[1].rssi > -80 && device[1].rssi < 70  ? '#f1a236' : device[1].rssi > -90 && device[1].rssi < 80  ? '#f77e51' : '#f15837'}"
       >
       </ion-avatar>
       <ion-label>
@@ -28,6 +27,8 @@
         <h3>id:{{device[0]}}</h3>
         <p>Meters: {{device[1].meters}}</p>
         <p>Rssi: {{device[1].rssi}}</p>
+        <p>Rssi's: {{device[1].rssis}}</p>
+        <p>avg: {{device[1].avg}}</p>
         <p
           [ngStyle]="{'color': device[1].estado == 'getting closer'? 'green' : device[1].estado == 'static'? 'orange' : 'red'}"
         >

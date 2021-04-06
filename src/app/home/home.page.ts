@@ -9,39 +9,34 @@ import { BeaconService } from '../services/beacon.service';
   styleUrls: ['home.page.scss'],
 })
 export class HomePage {
-  kontaktDevices: any[] = [];
-  newDevices: any[] = [];
+  Devices: any[] = [];
 
-  constructor(private BeaconService: BeaconService) {
-    interval(4000).subscribe((x) => {
+  constructor(private beaconService: BeaconService) {
+    const scanTime = 4000;
+    interval(scanTime).subscribe((x) => {
       console.log('scan');
 
       this.scanDevices();
     });
-
-    interval(1000).subscribe((x) => {
-      this.getDatos();
-    });
-
-    interval(1000).subscribe((x) => {
-      this.newDevices = this.BeaconService.getNewDic();
-      console.log(this.newDevices);
+    const getDataTime = 1000;
+    interval(getDataTime).subscribe((x) => {
+      this.getData();
     });
   }
 
   scanDevices() {
-    this.BeaconService.scanDevices();
+    this.beaconService.scanDevices();
   }
 
-  getDatos = () => {
+  getData = () => {
     setTimeout(() => {
-      this.kontaktDevices = this.BeaconService.getDevices();
+      this.Devices = this.beaconService.getDevices();
     }, 8000);
   };
 
   viewItem(item) {
-    console.log(item);
+    const infoDevice = item[1]['localName'] + item[0];
 
-    alert(item[1]['localName'] + item[1]['meters']);
+    alert(infoDevice);
   }
 }

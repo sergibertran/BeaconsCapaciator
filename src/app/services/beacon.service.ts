@@ -1,33 +1,29 @@
 import { Injectable } from '@angular/core';
 import { BleClient } from '@capacitor-community/bluetooth-le';
+import { argv } from 'process';
 @Injectable({
   providedIn: 'root',
 })
 export class BeaconService {
   kontaktDevices: any[] = [];
-  newkontaktDevices: any[] = [];
+
   constructor() {}
   rssis: any[] = [];
   meters: number;
-  devicesDictionary = new Map<String, Object>();
-  devices10Dictionary = new Map<String, any[]>();
-  resultado;
+  devices = new Map<String, Object>();
+  modifDevice;
   last_seen;
-  milis;
+  newrssis;
+  avg = 0;
   scanDevices() {
     this.scan();
   }
 
   getDevices() {
-    this.sortMethod();
+    this.sort();
     return this.kontaktDevices;
   }
-
-  getNewDic() {
-    return this.newkontaktDevices;
-  }
-
-  sortMethod() {
+  sort() {
     this.kontaktDevices.sort((n1, n2) => {
       if (n1[1].rssi < n2[1].rssi) {
         return 1;
@@ -45,68 +41,36 @@ export class BeaconService {
     try {
       await BleClient.initialize();
 
-      await BleClient.requestLEScan({ name: 'Kontakt' }, (result) => {
-        this.meters = Math.round(Math.pow(10, (-69 - result.rssi) / (10 * 2)));
-        this.resultado = result;
-        this.resultado.meters = this.meters;
+      await BleClient.requestLEScan({ name: 'Kontakt' }, (device) => {
+        this.meters = Math.round(Math.pow(10, (-69 - device.rssi) / (10 * 2)));
+        this.modifDevice = device;
+        this.modifDevice.meters = this.meters;
         this.last_seen = Date.now();
-        this.resultado.last_seen = this.last_seen;
+        this.modifDevice.last_seen = this.last_seen;
+        this.modifDevice.rssis = [];
+        const id = this.modifDevice.device.deviceId;
 
-        if (
-          this.devicesDictionary.has(this.resultado.device.deviceId) == true
-        ) {
-          this.devicesDictionary.delete(this.resultado.device.deviceId);
-          console.log('se repite y se borra');
-        }
+        if (this.devices.has(id)) {
+          const devices = this.devices.get(id);
+          this.modifDevice.rssis = devices['rssis'];
 
-        if (
-          this.devices10Dictionary.has(this.resultado.device.deviceId) == true
-        ) {
-          this.rssis = [];
-          this.rssis = this.devices10Dictionary.get(
-            this.resultado.device.deviceId
-          );
-          console.log(
-            this.devices10Dictionary.get(this.resultado.device.deviceId)
-          );
-          console.log(result.rssi);
-
-          this.rssis.push(result.rssi);
-          this.devices10Dictionary.set(
-            this.resultado.device.deviceId,
-            this.rssis
-          );
-          this.newkontaktDevices = Array.from(this.devices10Dictionary);
-        } else {
-          this.rssis = [];
-          this.rssis.push(result.rssi);
-          this.devices10Dictionary.set(
-            this.resultado.device.deviceId,
-            this.rssis
-          );
-          this.newkontaktDevices = Array.from(this.devices10Dictionary);
+          this.devices.delete(id);
         }
         this.setDistance();
+        this.setUbicationInfo();
+        this.modifDevice.rssis.push(device.rssi);
 
-        this.devicesDictionary.set(
-          this.resultado.device.deviceId,
-          this.resultado
-        );
-
-        this.kontaktDevices = Array.from(this.devicesDictionary);
+        this.devices.set(id, this.modifDevice);
+        this.kontaktDevices = Array.from(this.devices);
       });
 
       setTimeout(async () => {
-
         await BleClient.stopLEScan();
-
-const values = this.devicesDictionary.values();
+        const values = this.devices.values();
         for (let value of values) {
-          this.milis=Date.now() - value['last_seen'];
-          console.log("fecha"+this.milis / 1000);
+          const milis = Date.now() - value['last_seen'];
 
-          if ((Date.now() - value['last_seen']) / 1000 > 30) {
-            console.log(this.devicesDictionary.has(value['id']+"hace mas de "+((Date.now() - value['last_seen']) / 1000 > 30)));
+          if (milis / 1000 > 30) {
           }
         }
         console.log('stopped scanning');
@@ -117,39 +81,43 @@ const values = this.devicesDictionary.values();
   }
 
   setDistance() {
-    if (this.rssis.length > 1) {
-      console.log(this.rssis.length);
-      console.log(this.rssis);
+    const rssis = this.modifDevice.rssis;
 
-      console.log(
-        this.rssis[this.rssis.length - 1] + this.rssis[this.rssis.length - 2]
-      );
-
-      if (
-        this.rssis[this.rssis.length - 1] > this.rssis[this.rssis.length - 2]
-      ) {
-        this.resultado.estado = 'getting closer';
-        if (
-          this.rssis[this.rssis.length - 1] -
-            this.rssis[this.rssis.length - 2] >
-          5
-        ) {
-          this.resultado.estado = 'static';
+    if (rssis.length > 1) {
+      if (rssis[rssis.length - 1] > rssis[rssis.length - 2]) {
+        this.modifDevice.estado = 'getting closer';
+        if (rssis[rssis.length - 1] - rssis[rssis.length - 2] < 5) {
+          this.modifDevice.estado = 'static';
         }
-      } else if (
-        this.rssis[this.rssis.length - 1] < this.rssis[this.rssis.length - 2]
-      ) {
-        this.resultado.estado = 'walking away';
+      } else if (rssis[rssis.length - 1] < rssis[rssis.length - 2]) {
+        this.modifDevice.estado = 'walking away';
 
-        if (
-          this.rssis[this.rssis.length - 1] -
-            this.rssis[this.rssis.length - 2] >
-          -5
-        ) {
-          this.resultado.estado = 'static';
+        if (rssis[rssis.length - 1] - rssis[rssis.length - 2] > -5) {
+          this.modifDevice.estado = 'static';
         }
       } else {
-        this.resultado.estado = 'static';
+        this.modifDevice.estado = 'static';
+      }
+    }
+  }
+
+  setUbicationInfo() {
+    const id = this.modifDevice.device.deviceId;
+    const rssis = this.modifDevice.rssis;
+    const sum = 0;
+
+    if (id == 'F5:0F:CA:33:DF:A0') {
+      if (rssis.length >= 3) {
+        for (let index = rssis.length - 3; index < rssis.length; index++) {
+          this.avg = this.avg + rssis[index];
+        }
+        this.avg = this.avg / 3;
+        console.log(this.avg);
+
+        this.modifDevice.avg = Math.round(
+          Math.pow(10, (-69 - this.avg) / (10 * 2))
+        );
+        this.avg = 0;
       }
     }
   }
