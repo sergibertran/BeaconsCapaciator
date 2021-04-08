@@ -17,7 +17,7 @@
   <ion-searchbar placeholder="Search..." [(ngModel)]="filterTerm" animated="true"></ion-searchbar>
 
   <ion-list *ngFor="let device of Devices | filter:filterTerm">
-    <ion-item (click)="viewItem(device)">
+    <ion-item (click)="presentModal(device)">
       <ion-avatar
         slot="start"
         [ngStyle]="{'background': device[0] == 'F5:0F:CA:33:DF:A0'? 'blue' :device[1].rssi > -50 && device[1].rssi < 0  ? '#3eb938' : device[1].rssi > -60 && device[1].rssi < 50? '#ffff01' : device[1].rssi > -70 && device[1].rssi < 60? '#fdd702' : device[1].rssi > -80 && device[1].rssi < 70  ? '#f1a236' : device[1].rssi > -90 && device[1].rssi < 80  ? '#f77e51' : '#f15837'}"
