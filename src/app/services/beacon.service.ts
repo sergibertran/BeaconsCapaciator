@@ -13,8 +13,8 @@ export class BeaconService {
   devices = new Map<String, Object>();
   modifDevice;
   last_seen;
-  newrssis;
   avg = 0;
+
   scanDevices() {
     this.scan();
   }
@@ -80,7 +80,7 @@ export class BeaconService {
     }
   }
 
-  setDistance() {
+  setDistance() {  // ubi last rssi
     const rssis = this.modifDevice.rssis;
 
     if (rssis.length > 1) {
@@ -101,22 +101,34 @@ export class BeaconService {
     }
   }
 
-  setUbicationInfo() {
+  setUbicationInfo() {   //avg 3 ultimos rssi
     const id = this.modifDevice.device.deviceId;
     const rssis = this.modifDevice.rssis;
     const sum = 0;
+    const rssisLength = rssis.length-1;
+
 
     if (id == 'F5:0F:CA:33:DF:A0') {
-      if (rssis.length >= 3) {
-        for (let index = rssis.length - 3; index < rssis.length; index++) {
+      if (rssis.length >= 4) {
+        for (let index = rssis.length - 4; index < rssisLength; index++) {
           this.avg = this.avg + rssis[index];
+          console.log(rssis[index]);
+
         }
         this.avg = this.avg / 3;
         console.log(this.avg);
 
-        this.modifDevice.avg = Math.round(
-          Math.pow(10, (-69 - this.avg) / (10 * 2))
-        );
+        console.log(rssis[rssisLength]);
+        if(rssis[rssisLength]>this.avg+5){
+          this.modifDevice.avg=this.avg+"mes aprop"
+
+        }else if (rssis[rssisLength]<this.avg-5){
+          this.modifDevice.avg=this.avg+"mes lluny"
+
+        }else{
+          this.modifDevice.avg=this.avg+"igual"
+        }
+
         this.avg = 0;
       }
     }

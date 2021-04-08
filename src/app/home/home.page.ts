@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { BleClient } from '@capacitor-community/bluetooth-le';
 import { interval } from 'rxjs';
 import { BeaconService } from '../services/beacon.service';
 
@@ -10,7 +9,7 @@ import { BeaconService } from '../services/beacon.service';
 })
 export class HomePage {
   Devices: any[] = [];
-
+  filterTerm: string;
   constructor(private beaconService: BeaconService) {
     const scanTime = 4000;
     interval(scanTime).subscribe((x) => {

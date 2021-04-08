@@ -14,8 +14,9 @@
 
 <ion-content [fullscreen]="true">
   Total Devices: {{Devices.length}}
+  <ion-searchbar placeholder="Search..." [(ngModel)]="filterTerm" animated="true"></ion-searchbar>
 
-  <ion-list *ngFor="let device of Devices">
+  <ion-list *ngFor="let device of Devices | filter:filterTerm">
     <ion-item (click)="viewItem(device)">
       <ion-avatar
         slot="start"
