@@ -3,4 +3,23 @@ modal works
 
 {{device[0]}}
 {{device[1].rssis}}
+
+
+
 </p>
+
+<div class="flex">
+  <div class="flex-item">
+
+    <!-- ngif o algo que fagi que aixo es renderitzi un cop tingui les dades-->
+    <div style="display: block;">
+    <canvas baseChart width="400" height="400"
+                [datasets]="lineChartData"
+                [labels]="lineChartLabels"
+                [options]="lineChartOptions"
+                [colors]="lineChartColors"
+                [legend]="lineChartLegend"
+                [chartType]="lineChartType"
+              ></canvas>
+    </div>
+</div>

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HomePage } from './home.page';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { HomePageRoutingModule } from './home-routing.module';
+import { ChartsModule } from 'ng2-charts';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import { HomePageRoutingModule } from './home-routing.module';
     CommonModule,
     FormsModule,
     IonicModule,
+    ChartsModule,
     HomePageRoutingModule,
     Ng2SearchPipeModule
   ],
