@@ -1,5 +1,11 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
+import {
+  ChartConfiguration,
+  ChartData,
+  ChartDataSets,
+  ChartOptions,
+  ChartType,
+} from 'chart.js';
 import { Color, BaseChartDirective, Label } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 
@@ -8,36 +14,33 @@ import { CommonModule } from '@angular/common';
   templateUrl: './modal.component.html',
   styleUrls: ['./modal.component.scss'],
 })
-
 export class ModalComponent implements OnInit {
+  device;
+  datos;
+  nArray = [];
+  devicesMeters = [];
+  lineChartData: ChartDataSets[] = [{ data: [], label: 'Series A' }];
+  lineChartLabels: Label[] = [];
 
-  @Input() device;
-
-
-
-  constructor() { }
-
-
-
+  constructor() {}
 
   ngOnInit() {
-    console.log(this.device);
-    this.dataDevice=this.device[1].rssis
+    this.device;
+    for (let index = 0; index < this.device[1].rssis.length; index++) {
+      this.devicesMeters.push(
+        Math.round(Math.pow(10, (-69 - this.device[1].rssis[index]) / (10 * 2)))
+      );
+    }
+    this.lineChartData = [{ data: this.devicesMeters, label: this.device[0] }];
 
+    for (let index = 0; index < this.device[1].rssis.length; index++) {
+      this.nArray.push(index);
+    }
+    this.lineChartLabels = this.nArray;
+    this.datos = true;
   }
 
-  dataDevice;
-
-
-  public lineChartData: ChartDataSets[] = [
-
-    { data: [-40,-50,-80,-60], label: 'Series A' }];
-
-
-
-
-  public lineChartLabels: Label[] = ['1', '2', '3', '4', '5', '6', '7'];
-  public lineChartOptions: (ChartOptions & { annotation: any }) = {
+  public lineChartOptions: ChartOptions & { annotation: any } = {
     responsive: true,
     scales: {
       // We use this empty structure as a placeholder for dynamic theming.
@@ -47,17 +50,7 @@ export class ModalComponent implements OnInit {
           id: 'y-axis-0',
           position: 'left',
         },
-        {
-          id: 'y-axis-1',
-          position: 'right',
-          gridLines: {
-            color: 'rgba(255,0,0,0.3)',
-          },
-          ticks: {
-            fontColor: 'red',
-          }
-        }
-      ]
+      ],
     },
     annotation: {
       annotations: [
@@ -71,44 +64,59 @@ export class ModalComponent implements OnInit {
           label: {
             enabled: true,
             fontColor: 'orange',
-            content: 'LineAnno'
-          }
+            content: 'LineAnno',
+          },
         },
       ],
     },
   };
   public lineChartColors: Color[] = [
-    { // grey
+    {
+      // grey
       backgroundColor: 'rgba(148,159,177,0.2)',
       borderColor: 'rgba(148,159,177,1)',
       pointBackgroundColor: 'rgba(148,159,177,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)',
     },
-    { // dark grey
+    {
+      // dark grey
       backgroundColor: 'rgba(77,83,96,0.2)',
       borderColor: 'rgba(77,83,96,1)',
       pointBackgroundColor: 'rgba(77,83,96,1)',
       pointBorderColor: '#fff',
       pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(77,83,96,1)'
+      pointHoverBorderColor: 'rgba(77,83,96,1)',
     },
-    { // red
-      backgroundColor: 'rgba(255,0,0,0.3)',
-      borderColor: 'red',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    }
   ];
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
 
-
   @ViewChild(BaseChartDirective, { static: true }) chart: BaseChartDirective;
 
+  segmentChanged(ev: any) {
+    console.log(ev.detail);
+    console.log(typeof ev.detail);
 
+    if (ev.detail.value == 'meters') {
+      console.log('meters');
 
+      for (let index = 0; index < this.device[1].rssis.length; index++) {
+        this.devicesMeters.push(
+          Math.round(
+            Math.pow(10, (-69 - this.device[1].rssis[index]) / (10 * 2))
+          )
+        );
+      }
+      this.lineChartData = [
+        { data: this.devicesMeters, label: this.device[0] },
+      ];
+    } else if (ev.detail.value == 'rssi') {
+      this.lineChartData = [
+        { data: this.device[1].rssis, label: this.device[0] },
+      ];
+      console.log('rssi');
+    }
+  }
 }

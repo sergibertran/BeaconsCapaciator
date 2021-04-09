@@ -7,6 +7,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ChartsModule } from 'ng2-charts';
 import { ModalComponent } from './modal/modal.component';
 
+import 'chartjs-plugin-zoom';
 @NgModule({
   declarations: [AppComponent,ModalComponent],
   entryComponents: [],

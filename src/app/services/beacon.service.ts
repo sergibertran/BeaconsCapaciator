@@ -41,7 +41,7 @@ export class BeaconService {
     try {
       await BleClient.initialize();
 
-      await BleClient.requestLEScan({ name: 'Kontakt' }, (device) => {
+      await BleClient.requestLEScan({}, (device) => {
         this.meters = Math.round(Math.pow(10, (-69 - device.rssi) / (10 * 2)));
         this.modifDevice = device;
         this.modifDevice.meters = this.meters;
