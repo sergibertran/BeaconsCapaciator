@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { interval } from 'rxjs';
 import { ModalComponent } from '../modal/modal.component';
 import { BeaconService } from '../services/beacon.service';
-
+import { GeneralModalComponent } from '../general-modal/general-modal.component';
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -42,10 +42,25 @@ export class HomePage {
   }
 
   async presentModal(device) {
+    console.log(device);
+
     const modal = await this.modalController.create({
       component: ModalComponent,
       componentProps:{
         device: device
+
+      }
+    });
+    return await modal.present();
+  }
+
+  async presentGeneralModal(Devices) {
+    console.log(Devices);
+
+    const modal = await this.modalController.create({
+      component: GeneralModalComponent,
+      componentProps:{
+        Devices: Devices
 
       }
     });

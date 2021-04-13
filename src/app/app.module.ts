@@ -6,10 +6,10 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ChartsModule } from 'ng2-charts';
 import { ModalComponent } from './modal/modal.component';
-
+import { GeneralModalComponent } from './general-modal/general-modal.component';
 import 'chartjs-plugin-zoom';
 @NgModule({
-  declarations: [AppComponent,ModalComponent],
+  declarations: [AppComponent,ModalComponent,GeneralModalComponent],
   entryComponents: [],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule,ChartsModule],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],

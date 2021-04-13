@@ -6,7 +6,7 @@ import {
   ChartOptions,
   ChartType,
 } from 'chart.js';
-import { Color, BaseChartDirective, Label } from 'ng2-charts';
+import { Color, BaseChartDirective, Label, SingleDataSet } from 'ng2-charts';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -19,8 +19,16 @@ export class ModalComponent implements OnInit {
   datos;
   nArray = [];
   devicesMeters = [];
+  allDevices = [];
   lineChartData: ChartDataSets[] = [{ data: [], label: 'Series A' }];
   lineChartLabels: Label[] = [];
+
+  // PolarArea
+
+  public polarAreaChartData: SingleDataSet = [];
+  public polarAreaLegend = true;
+
+  public polarAreaChartType: ChartType = 'polarArea';
 
   constructor() {}
 
@@ -31,6 +39,8 @@ export class ModalComponent implements OnInit {
         Math.round(Math.pow(10, (-69 - this.device[1].rssis[index]) / (10 * 2)))
       );
     }
+
+    this.polarAreaChartData = this.devicesMeters;
     this.lineChartData = [{ data: this.devicesMeters, label: this.device[0] }];
 
     for (let index = 0; index < this.device[1].rssis.length; index++) {
@@ -118,5 +128,26 @@ export class ModalComponent implements OnInit {
       ];
       console.log('rssi');
     }
+  }
+
+  // events
+  public chartClicked({
+    event,
+    active,
+  }: {
+    event: MouseEvent;
+    active: {}[];
+  }): void {
+    console.log(event, active);
+  }
+
+  public chartHovered({
+    event,
+    active,
+  }: {
+    event: MouseEvent;
+    active: {}[];
+  }): void {
+    console.log(event, active);
   }
 }
